@@ -19,6 +19,7 @@ limitations under the License.
 #include "BWCommon.h"
 
 #include <sstream>
+#include <boost/version.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -43,14 +44,18 @@ namespace BWPack
 
 	void BWXMLReader::saveTo(const std::string& destname) const
 	{
-		static auto settings = boost::property_tree::xml_writer_make_settings('\t', 1);
+		#if (BOOST_VERSION >= 105600)
+			static auto settings = boost::property_tree::xml_writer_make_settings<ptree::key_type>('\t', 1);
+		#else
+			static auto settings = boost::property_tree::xml_writer_make_settings('\t', 1);
+		#endif
 		boost::property_tree::write_xml(destname, mTree, std::locale(), settings);
 	}
 
 	void BWXMLReader::ReadStringTable()
 	{
-		for (std::string tmp = mStream.getNullTerminatedString(); 
-			!tmp.empty(); 
+		for (std::string tmp = mStream.getNullTerminatedString();
+			!tmp.empty();
 			tmp = mStream.getNullTerminatedString())
 			mStrings.push_back(tmp);
 		//std::cout << "Collected " << mStrings.size() << " strings." << std::endl;
@@ -170,7 +175,7 @@ namespace BWPack
 			assert(it->nameIdx < mStrings.size());
 			//keys may contain dots, they confuse the ptree
 			auto path = ptree::path_type(mStrings[it->nameIdx], '\0'); // so we make a custom path
-			readData(it->data, current_node.add(path, ""), prev_offset); 
+			readData(it->data, current_node.add(path, ""), prev_offset);
 			prev_offset = it->data.offset();
 		}
 		return current_node;

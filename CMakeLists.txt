@@ -27,14 +27,14 @@ link_directories(${Boost_LIBRARY_DIRS})
 include_directories(BWXML ${Boost_INCLUDE_DIRS})
 
 file (GLOB headers BWXML/*.h*)
-add_executable(bwxml ${SOURCES} ${headers})
-target_link_libraries(bwxml ${Boost_LIBRARIES})
+add_executable(bwxml_parser ${SOURCES} ${headers})
+target_link_libraries(bwxml_parser ${Boost_LIBRARIES})
 
 #
 # Installation
 #
 if(WIN32)
-    install(TARGETS bwxml RUNTIME DESTINATION .)
+    install(TARGETS bwxml_parser RUNTIME DESTINATION .)
 else(WIN32)
-    install(TARGETS bwxml RUNTIME DESTINATION bin)
+    install(TARGETS bwxml_parser RUNTIME DESTINATION bin)
 endif(WIN32)
